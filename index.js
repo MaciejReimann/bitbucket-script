@@ -19,30 +19,45 @@ async function run(args) {
     const filename = "package.json"
     try {
         const baseURL = "https://api.bitbucket.org/2.0"
-        const { data: currentFile } = await axios.get(`${baseURL}/repositories/${workspace}/${repository}/${defaultPathToFile}/${filename}`, {
+        const { data: maybeJSON } = await axios.get(`${baseURL}/repositories/${workspace}/${repository}/${defaultPathToFile}/${filename}`, {
             headers: {
                 "Authorization": `Bearer ${REPO_ACCESS_TOKEN}`,
                 'Accept': "application/json"
             }
         })
-        // TODO: validate JSON
-        console.log(`Current file: ${JSON.parse(JSON.stringify(currentFile))}`)
-        console.log(currentFile)
 
-        const updatedFile = bumpVersion(currentFile, { packageName, version })
+        let packageJSON
+        try {
+            packageJSON = JSON.parse(JSON.stringify(maybeJSON))
+        } catch (e) {
+            throw e
+        }
+
+        console.log(`Current file: ${packageJSON}`)
+        console.log(packageJSON)
+
+        const updatedDependencies = bumpVersion(packageJSON.dependencies, { packageName, version })
+        const newPackageJSON = { ...packageJSON, dependencies: updatedDependencies }
+
+        console.log("newPackageJSON")
+        console.log(newPackageJSON)
     } catch (e) {
         console.error(e)
     }
 }
 
-const bumpVersion = (json, { packageName, newVersion }) => {
-    if (!json.dependencies) return // TODO: throw error in validate()
-    if (!json.dependencies[packageName]) return // TODO: throw error validate()
+const bumpVersion = (dependencies, { packageName, version }) => {
+    if (!dependencies) return // TODO: throw error in validate()
+    if (!dependencies[packageName]) return // TODO: throw error validate()
 
-    console.log(`Current version of: ${packageName} is: ${json.dependencies[packageName]}`)
+    console.log(`Current version of: ${packageName} is: ${dependencies[packageName]}`)
 
     // TODO: bump only when necessary: npm install compare-versions
     // https://www.npmjs.com/package/compare-versions
+
+    const newDeps = { ...dependencies, [packageName]: version }
+
+    return newDeps
 }
 
 run(process.argv.slice(2))
