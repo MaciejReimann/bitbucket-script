@@ -1,0 +1,21 @@
+{
+  "name": "bitbucket-script",
+  "version": "1.0.0",
+  "description": "Updates package.json and opens a PR",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaciejReimann/bitbucket-script.git"
+  },
+  "author": "Maciej Reimann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaciejReimann/bitbucket-script/issues"
+  },
+  "homepage": "https://github.com/MaciejReimann/bitbucket-script#readme",
+  "dependencies": {
+  }
+}
