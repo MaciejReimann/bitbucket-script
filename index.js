@@ -19,21 +19,30 @@ async function run(args) {
     const filename = "package.json"
     try {
         const baseURL = "https://api.bitbucket.org/2.0"
-
-        const { data } = await axios.get(`${baseURL}/repositories/${workspace}/${repository}/${defaultPathToFile}/${filename}`, {
+        const { data: currentFile } = await axios.get(`${baseURL}/repositories/${workspace}/${repository}/${defaultPathToFile}/${filename}`, {
             headers: {
                 "Authorization": `Bearer ${REPO_ACCESS_TOKEN}`,
                 'Accept': "application/json"
             }
         })
+        // TODO: validate JSON
+        console.log(`Current file: ${JSON.parse(JSON.stringify(currentFile))}`)
+        console.log(currentFile)
 
-        console.log(data)
-
+        const updatedFile = bumpVersion(currentFile, { packageName, version })
     } catch (e) {
         console.error(e)
     }
 }
 
+const bumpVersion = (json, { packageName, newVersion }) => {
+    if (!json.dependencies) return // TODO: throw error in validate()
+    if (!json.dependencies[packageName]) return // TODO: throw error validate()
 
+    console.log(`Current version of: ${packageName} is: ${json.dependencies[packageName]}`)
+
+    // TODO: bump only when necessary: npm install compare-versions
+    // https://www.npmjs.com/package/compare-versions
+}
 
 run(process.argv.slice(2))

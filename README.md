@@ -2,7 +2,7 @@
 
 Run: `node index.js <workspace> <repository> <package> <version>`, 
 
-Example: `node index.js maciejReimann my-first-repo some-package-name 1.0.1`
+Example: `node index.js maciejReimann my-first-repo axios 3.0.0`
 TODO: implement authentication args to update any repo
 
 - logs the package.json before the update
